@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TakedownOfOurOwn</title>
+<style>html,body{margin:0;background:#f3f4f1}</style>
+</head>
+<body>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,600;7..72,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+.a3f {
+  --bg: #f3f4f1; --surface: #ffffff; --fg: #1d2420; --muted: #5d6862; --line: #d6dbd6;
+  --accent: #2f6b55; --accent-ink: #ffffff; --warn-bg: #fbf1dc; --warn-fg: #6b4a10;
+  --serif: "Literata", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  background: var(--bg); color: var(--fg); font-family: var(--serif); font-size: 16px; line-height: 1.55;
+  text-align: left; border-radius: 12px; box-sizing: border-box;
+}
+.a3f *, .a3f *::before, .a3f *::after { box-sizing: border-box; }
+.a3f .wrap { max-width: 680px; margin: 0 auto; padding: 28px 16px 40px; display: grid; gap: 28px; }
+.a3f h1 { font-family: var(--serif); font-weight: 700; font-size: 1.9rem; line-height: 1.15; margin: 0; color: var(--fg); text-wrap: balance; }
+.a3f h2 { font-family: var(--serif); font-weight: 700; font-size: 1.15rem; margin: 0; color: var(--fg); }
+.a3f p, .a3f li { color: var(--fg); margin: 0; }
+.a3f .lede { color: var(--muted); margin: 8px 0 0; }
+.a3f .label { font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.a3f section { display: grid; gap: 12px; }
+.a3f .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 14px; }
+.a3f label { font-weight: 600; display: grid; gap: 6px; color: var(--fg); }
+.a3f label small { font-weight: 400; color: var(--muted); font-size: .85rem; }
+.a3f textarea { font-family: var(--mono); font-size: .9rem; color: var(--fg); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 10px; width: 100%; resize: vertical; margin: 0; }
+.a3f textarea:focus, .a3f button:focus-visible, .a3f a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.a3f .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.a3f button { font-family: var(--serif); font-weight: 600; font-size: .95rem; border-radius: 6px; padding: 9px 16px; cursor: pointer;
+  border: 1px solid var(--accent); background: var(--accent); color: var(--accent-ink); margin: 0; line-height: 1.3; }
+.a3f button.ghost { background: transparent; color: var(--accent); }
+.a3f .list { display: grid; border-top: 1px solid var(--line); }
+.a3f .item { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; padding: 12px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.a3f .what { min-width: 0; }
+.a3f .id { font-family: var(--mono); font-size: .92rem; overflow-wrap: anywhere; }
+.a3f .sub { color: var(--muted); font-size: .85rem; overflow-wrap: anywhere; }
+.a3f .links { display: flex; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+.a3f .links a { font-family: var(--mono); font-size: .8rem; text-decoration: none; color: var(--accent);
+  border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; white-space: nowrap; }
+.a3f .links a:hover { border-color: var(--accent); }
+.a3f .empty { color: var(--muted); font-style: italic; padding: 8px 0; }
+.a3f .note { background: var(--warn-bg); border-radius: 8px; padding: 12px 14px; font-size: .9rem; }
+.a3f .note p { color: var(--warn-fg); }
+.a3f #a3f-email { font-size: .82rem; line-height: 1.5; min-height: 260px; }
+.a3f .addr { font-family: var(--mono); user-select: all; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 1px 6px; }
+.a3f .status { font-size: .85rem; color: var(--accent); min-height: 1.2em; }
+.a3f ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
+@media (max-width: 480px) { .a3f .item { grid-template-columns: 1fr; } .a3f .links { justify-content: flex-start; } }
+</style>
+
+<div class="a3f">
+<div class="wrap">
+  <header>
+    <div class="label">TakedownOfOurOwn · For AO3 authors</div>
+    <h1>Find your works on ao3.life</h1>
+    <p class="lede">Paste your AO3 username, work IDs, or full AO3 work links. This page builds links to ao3.life and drafts the removal email for you.</p>
+    <ol style="margin-top:12px">
+      <li><strong>Start with your username.</strong> It opens ao3.life's search in a new tab. The results show up there, not on this page.</li>
+      <li><strong>Skim for your name.</strong> The search also matches titles, tags and summaries, so a common username may pull in other people's works.</li>
+      <li><strong>Paste in the IDs you find.</strong> Each work ID links straight to that one copy, and every ID goes into the email.</li>
+    </ol>
+  </header>
+
+  <section class="panel">
+    <h2>Your works</h2>
+    <label for="a3f-users">AO3 usernames or pseuds
+      <small>One per line. Include any old pseuds or orphan_account if you orphaned works.</small>
+      <textarea id="a3f-users" rows="2" spellcheck="false"></textarea>
+    </label>
+    <label for="a3f-ids">Work IDs or AO3 links
+      <small>Any mix: <span class="addr">12345678</span> or <span class="addr">archiveofourown.org/works/12345678</span>. Chapter links work too.</small>
+      <textarea id="a3f-ids" rows="5" spellcheck="false"></textarea>
+    </label>
+    <div class="row">
+      <button id="a3f-go" type="button">Build links</button>
+      <button id="a3f-example" type="button" class="ghost">Load example</button>
+      <button id="a3f-clear" type="button" class="ghost">Clear</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Search by username</h2>
+    <div class="list" id="a3f-userList"></div>
+  </section>
+
+  <section>
+    <h2>Direct work pages</h2>
+    <div class="list" id="a3f-workList"></div>
+    <div class="note"><p>If a work page says “Removed” or shows nothing, it was never saved or has already been taken down. Mature, Explicit and Not Rated works sit behind an age check on ao3.life, so you may need to confirm your age to see that the copy is there.</p></div>
+  </section>
+
+  <section class="panel">
+    <h2>All links</h2>
+    <label for="a3f-allLinks">Every link above, one per line
+      <small>Paste these into a note, a spreadsheet, or a post.</small>
+      <textarea id="a3f-allLinks" rows="6" readonly spellcheck="false"></textarea>
+    </label>
+    <div class="row">
+      <button id="a3f-copyLinks" type="button">Copy all links</button>
+      <button id="a3f-copyWorks" type="button" class="ghost">Copy ao3.life work links only</button>
+      <span class="status" id="a3f-linkStatus" role="status"></span>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Removal email</h2>
+    <ol>
+      <li>Send from the email address on your AO3 account. That is the proof ao3.life asks for.</li>
+      <li>If you can't reach that inbox, add a short note to your AO3 profile when AO3 is back, and say so in the email.</li>
+      <li>Send to <span class="addr">legal@ao3.life</span>. One email can list every work.</li>
+    </ol>
+    <label for="a3f-email">Draft (edit freely)
+      <textarea id="a3f-email" spellcheck="true"></textarea>
+    </label>
+    <div class="row">
+      <button id="a3f-copy" type="button">Copy email</button>
+      <span class="status" id="a3f-status" role="status"></span>
+    </div>
+  </section>
+
+  <p class="label" style="text-transform:none;letter-spacing:0">This tool doesn't contact ao3.life or collect anything you type. It only builds links and an email draft in your browser.</p>
+</div>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById('a3f-' + id); };
+  var users = $('users'), ids = $('ids'), workLinksText = '';
+
+  function parseIds(text) {
+    var out = [];
+    text.split(/[\s,]+/).forEach(function (tok) {
+      if (!tok) return;
+      var m = tok.match(/(?:works\/|ao3:)(\d+)/) || (/chapters\//.test(tok) ? null : tok.match(/^(\d{3,10})$/));
+      if (m && out.indexOf(m[1]) < 0) out.push(m[1]);
+    });
+    return out;
+  }
+  function parseUsers(text) {
+    var out = [];
+    text.split(/[\n,]+/).forEach(function (line) {
+      var u = line.trim();
+      var m = u.match(/users\/([^\/\s?#]+)/);
+      if (m) u = decodeURIComponent(m[1]);
+      u = u.replace(/^@/, '');
+      if (u && out.indexOf(u) < 0) out.push(u);
+    });
+    return out;
+  }
+  function link(href, text) {
+    var a = document.createElement('a');
+    a.href = href; a.target = '_blank'; a.rel = 'noopener noreferrer'; a.textContent = text;
+    return a;
+  }
+  function row(main, sub, anchors) {
+    var d = document.createElement('div'); d.className = 'item';
+    var w = document.createElement('div'); w.className = 'what';
+    var i = document.createElement('div'); i.className = 'id'; i.textContent = main; w.appendChild(i);
+    if (sub) { var s = document.createElement('div'); s.className = 'sub'; s.textContent = sub; w.appendChild(s); }
+    var l = document.createElement('div'); l.className = 'links';
+    anchors.forEach(function (a) { l.appendChild(a); });
+    d.appendChild(w); d.appendChild(l); return d;
+  }
+  function empty(el, msg) {
+    el.innerHTML = '';
+    var p = document.createElement('div'); p.className = 'empty'; p.textContent = msg; el.appendChild(p);
+  }
+  function draft(U, W) {
+    var who = U.length ? U.join(', ') : '[your AO3 username]';
+    var list = W.length
+      ? W.map(function (id) { return '- https://ao3.life/works/ao3:' + id + '  (AO3: https://archiveofourown.org/works/' + id + ')'; }).join('\n')
+      : '- [ao3.life link or AO3 work ID]';
+    return 'Subject: Removal request: works by ' + who + '\n\n' +
+      'Hello,\n\n' +
+      'I am the author of the following works, posted on the Archive of Our Own under the name ' + who + '. I did not give permission for them to be copied, stored, distributed as EPUB, or turned into audiobooks. Please remove all of them from ao3.life, including search, tag pages, downloads, the reader, audio, and stored copies and backups:\n\n' +
+      list + '\n\n' +
+      'Please also remove any other works credited to ' + who + ' that are not listed above.\n\n' +
+      'I am writing from the email address on my AO3 account.\n\n' +
+      'Please confirm in writing once each work has been removed.\n\n' +
+      (U[0] || '[your name or AO3 username]');
+  }
+  function build() {
+    var U = parseUsers(users.value), W = parseIds(ids.value);
+    var ul = $('userList'), wl = $('workList');
+    if (!U.length) empty(ul, 'Add a username above to search for it.');
+    else {
+      ul.innerHTML = '';
+      U.forEach(function (u) {
+        ul.appendChild(row(u, 'Opens ao3.life search in a new tab. Look for your name under each title, then copy the number from each of your work links (ao3:12345) into the box above.', [
+          link('https://ao3.life/?q=' + encodeURIComponent(u), 'Search'),
+          link('https://ao3.life/?q=' + encodeURIComponent(u) + '&rating=explicit', 'Explicit only')
+        ]));
+      });
+    }
+    if (!W.length) empty(wl, 'Add work IDs or AO3 links above.');
+    else {
+      wl.innerHTML = '';
+      W.forEach(function (id) {
+        wl.appendChild(row(id, 'archiveofourown.org/works/' + id, [
+          link('https://ao3.life/works/ao3:' + id, 'ao3.life copy'),
+          link('https://archiveofourown.org/works/' + id, 'AO3 original')
+        ]));
+      });
+    }
+    var searchLinks = U.map(function (u) { return 'https://ao3.life/?q=' + encodeURIComponent(u); });
+    var workLinks = W.map(function (id) { return 'https://ao3.life/works/ao3:' + id; });
+    workLinksText = workLinks.join('\n');
+    var parts = [];
+    if (searchLinks.length) parts.push('ao3.life searches:\n' + searchLinks.join('\n'));
+    if (workLinks.length) parts.push('ao3.life copies:\n' + workLinks.join('\n'));
+    if (W.length) parts.push('AO3 originals:\n' + W.map(function (id) { return 'https://archiveofourown.org/works/' + id; }).join('\n'));
+    $('allLinks').value = parts.join('\n\n');
+    $('email').value = draft(U, W);
+  }
+  function copyText(text, field, status) {
+    if (!text) { status.textContent = 'Nothing to copy yet.'; return; }
+    function fallback() { field.focus(); field.select(); status.textContent = 'Selected. Press Ctrl+C or Cmd+C to copy.'; }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () { status.textContent = 'Copied.'; }, fallback);
+    } else fallback();
+  }
+
+  $('go').addEventListener('click', build);
+  $('clear').addEventListener('click', function () { users.value = ''; ids.value = ''; build(); });
+  $('example').addEventListener('click', function () {
+    users.value = 'example_author';
+    ids.value = 'https://archiveofourown.org/works/2102070\n2095944\nhttps://archiveofourown.org/works/51735436/chapters/130000000';
+    build();
+  });
+  $('copy').addEventListener('click', function () { copyText($('email').value, $('email'), $('status')); });
+  $('copyLinks').addEventListener('click', function () { copyText($('allLinks').value, $('allLinks'), $('linkStatus')); });
+  $('copyWorks').addEventListener('click', function () { copyText(workLinksText, $('allLinks'), $('linkStatus')); });
+  build();
+})();
+</script>
+</body>
+</html>
