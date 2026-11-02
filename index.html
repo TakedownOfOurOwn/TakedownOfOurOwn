@@ -327,7 +327,8 @@ ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
   $('users').addEventListener('input', renderSearches);
   $('copyEmail').addEventListener('click', function () { copyText($('email').value, $('email'), $('emailStatus')); });
   $('copyLinks').addEventListener('click', function () {
-    copyText(works.map(function (id) { return 'https://ao3.life/works/ao3:' + id; }).join('\n'), null, $('linkStatus'));
+    if (!works.length) { $('linkStatus').textContent = 'Nothing to copy yet.'; return; }
+    copyText('My works on ao3.life:\n' + works.map(function (id) { return 'https://ao3.life/works/ao3:' + id; }).join('\n') + '\n', null, $('linkStatus'));
   });
   $('clearAll').addEventListener('click', function () { works = []; msg('', ''); render(); });
 
