@@ -81,4 +81,259 @@ ol { margin: 0; padding-left: 1.2em; display: grid; gap: 6px; }
     <ol>
       <li>On the ao3.life search page, select everything (Ctrl+A or Cmd+A on a computer; on a phone, long-press the text and choose Select All).</li>
       <li>Copy it.</li>
-      
+      <li>Paste it in the box below. Your works are picked out automatically.</li>
+    </ol>
+    <label for="paste">Paste the ao3.life page here
+      <textarea id="paste" placeholder="Paste here"></textarea>
+    </label>
+    <div id="pasteMsg" role="status"></div>
+    <div class="msg warn"><strong>More than one page of results?</strong> Repeat this for every page: open the next page on ao3.life, select all, copy, and paste here again. Your list keeps growing and won't add the same work twice.</div>
+
+    <details>
+      <summary>Didn't work? Add links one at a time</summary>
+      <div class="inner">
+        <p class="hint">On ao3.life, long-press one of your titles and choose Copy Link. Paste it here and tap Add. AO3 links and plain work ID numbers work too.</p>
+        <label for="manual">Links or work IDs
+          <textarea id="manual" rows="3" spellcheck="false"></textarea>
+        </label>
+        <div class="row"><button type="button" id="addManual">Add</button></div>
+      </div>
+    </details>
+
+    <div class="row" style="justify-content:space-between">
+      <strong>Your works</strong><span class="count" id="count">0 works</span>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="row">
+      <button type="button" id="copyLinks" class="ghost">Copy all links</button>
+      <button type="button" id="clearAll" class="ghost">Start over</button>
+      <span class="status" id="linkStatus" role="status"></span>
+    </div>
+  </section>
+
+  <section class="step" aria-labelledby="s3">
+    <h2 id="s3"><span class="n">3</span>Send the removal email</h2>
+    <ol>
+      <li>Copy the email below.</li>
+      <li>Send it from the email address on your AO3 account. That's how ao3.life checks the works are yours.</li>
+      <li>Send it to <span class="addr">legal@ao3.life</span>.</li>
+    </ol>
+    <label for="email">Your email (edit anything you like)
+      <textarea id="email"></textarea>
+    </label>
+    <div class="row">
+      <button type="button" id="copyEmail">Copy email</button>
+      <span class="status" id="emailStatus" role="status"></span>
+    </div>
+    <p class="hint">Can't get into that inbox? Send it from any address and say so. ao3.life says they'll tell you what else they need. Once AO3 is back, you can also add a note to your AO3 profile for them to check.</p>
+  </section>
+
+  <p class="foot">This page doesn't contact ao3.life or store anything you type. Everything happens in your browser.</p>
+</div>
+
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var works = [];
+
+  function names() {
+    return $('users').value.split(',').map(function (s) {
+      s = s.trim();
+      var m = s.match(/users\/([^\/\s?#]+)/);
+      if (m) s = decodeURIComponent(m[1]);
+      return s.replace(/^@/, '');
+    }).filter(Boolean);
+  }
+  function idFromHref(h) {
+    var m = (h || '').match(/works\/ao3:(\d+)/) || (h || '').match(/archiveofourown\.org\/works\/(\d+)/);
+    return m ? m[1] : null;
+  }
+  function idsFromText(text) {
+    var out = [];
+    text.split(/[\s,]+/).forEach(function (tok) {
+      if (!tok) return;
+      var m = tok.match(/(?:works\/|ao3:)(\d+)/) || (/chapters\//.test(tok) ? null : tok.match(/^(\d{3,10})$/));
+      if (m && out.indexOf(m[1]) < 0) out.push(m[1]);
+    });
+    return out;
+  }
+  function cardsFromHtml(html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var anchors = doc.querySelectorAll('a[href]');
+    var cards = [], seen = {};
+    for (var i = 0; i < anchors.length; i++) {
+      var id = idFromHref(anchors[i].getAttribute('href'));
+      if (!id || seen[id]) continue;
+      seen[id] = 1;
+      var c = anchors[i];
+      while (c.parentElement) {
+        var inner = c.parentElement.querySelectorAll('a[href]'), other = false;
+        for (var j = 0; j < inner.length; j++) {
+          var x = idFromHref(inner[j].getAttribute('href'));
+          if (x && x !== id) { other = true; break; }
+        }
+        if (other) break;
+        c = c.parentElement;
+      }
+      cards.push({ id: id, text: (c.textContent || '').toLowerCase() });
+    }
+    return cards;
+  }
+  function addIds(list) {
+    var added = 0;
+    list.forEach(function (id) { if (works.indexOf(id) < 0) { works.push(id); added++; } });
+    render();
+    return added;
+  }
+  function msg(kind, text, action) {
+    var box = $('pasteMsg');
+    box.innerHTML = '';
+    if (!text) return;
+    var d = document.createElement('div');
+    d.className = 'msg ' + kind;
+    d.textContent = text;
+    if (action) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'ghost'; b.textContent = action.label;
+      b.addEventListener('click', action.run);
+      d.appendChild(document.createElement('br'));
+      d.appendChild(b);
+    }
+    box.appendChild(d);
+  }
+
+  function handlePaste(html, text) {
+    var cards = html ? cardsFromHtml(html) : [];
+    if (cards.length) {
+      var N = names().map(function (n) { return n.toLowerCase(); });
+      var all = cards.map(function (c) { return c.id; });
+      if (!N.length) {
+        msg('warn', 'Found ' + cards.length + ' works on that page. Add your username in step 1 so only yours are picked, or add them all.',
+          { label: 'Add all ' + cards.length, run: function () { var a = addIds(all); msg('ok', 'Added ' + a + ' works. Remove any that aren’t yours.'); } });
+        return;
+      }
+      var mine = cards.filter(function (c) { return N.some(function (n) { return c.text.indexOf(n) >= 0; }); });
+      if (!mine.length) {
+        msg('warn', 'Found ' + cards.length + ' works on that page, but none show your username. If yours are Mature or Explicit, set the Rating filter to Any rating on ao3.life, then copy and paste the page again.',
+          { label: 'Add all ' + cards.length + ' anyway', run: function () { var a = addIds(all); msg('ok', 'Added ' + a + ' works. Remove any that aren’t yours.'); } });
+        return;
+      }
+      var added = addIds(mine.map(function (c) { return c.id; }));
+      var skipped = cards.length - mine.length;
+      msg('ok', 'Added ' + added + ' of your works' + (added < mine.length ? ' (' + (mine.length - added) + ' were already in your list)' : '') + '.' +
+        (skipped ? ' Skipped ' + skipped + ' by other people.' : ''));
+      return;
+    }
+    var ids = idsFromText(text || '');
+    if (ids.length) {
+      var a = addIds(ids);
+      msg('ok', 'Added ' + a + ' work' + (a === 1 ? '' : 's') + '.');
+      return;
+    }
+    if ((text || '').trim()) {
+      msg('warn', 'That pasted as plain text without links, which some phone browsers do. Try a different browser, or use “Add links one at a time” below.');
+    }
+  }
+
+  $('paste').addEventListener('paste', function (e) {
+    var cd = e.clipboardData || window.clipboardData;
+    if (!cd) return;
+    e.preventDefault();
+    handlePaste(cd.getData('text/html'), cd.getData('text/plain') || cd.getData('Text'));
+  });
+  $('paste').addEventListener('input', function () {
+    var v = $('paste').value;
+    if (!v) return;
+    $('paste').value = '';
+    handlePaste('', v);
+  });
+
+  $('addManual').addEventListener('click', function () {
+    var ids = idsFromText($('manual').value);
+    if (!ids.length) { msg('warn', 'No work links or IDs found in that box.'); return; }
+    var a = addIds(ids);
+    $('manual').value = '';
+    msg('ok', 'Added ' + a + ' work' + (a === 1 ? '' : 's') + '.');
+  });
+
+  function render() {
+    var list = $('list');
+    list.innerHTML = '';
+    $('count').textContent = works.length + (works.length === 1 ? ' work' : ' works');
+    if (!works.length) {
+      var e = document.createElement('div'); e.className = 'empty';
+      e.textContent = 'Nothing yet. Paste your search page above.';
+      list.appendChild(e);
+    }
+    works.forEach(function (id) {
+      var row = document.createElement('div'); row.className = 'item';
+      var s = document.createElement('span'); s.className = 'id'; s.textContent = id;
+      var l = document.createElement('span'); l.className = 'links';
+      [['ao3.life copy', 'https://ao3.life/works/ao3:' + id], ['AO3 original', 'https://archiveofourown.org/works/' + id]].forEach(function (p) {
+        var a = document.createElement('a'); a.href = p[1]; a.textContent = p[0]; a.target = '_blank'; a.rel = 'noopener noreferrer'; l.appendChild(a);
+      });
+      var x = document.createElement('button'); x.type = 'button'; x.className = 'x'; x.textContent = 'Remove';
+      x.setAttribute('aria-label', 'Remove work ' + id);
+      x.addEventListener('click', function () { works = works.filter(function (w) { return w !== id; }); render(); });
+      l.appendChild(x);
+      row.appendChild(s); row.appendChild(l); list.appendChild(row);
+    });
+    $('email').value = draft();
+  }
+
+  function renderSearches() {
+    var box = $('searches');
+    box.innerHTML = '';
+    var N = names();
+    if (!N.length) {
+      var p = document.createElement('span'); p.className = 'hint'; p.textContent = 'Type your username to get your search link.';
+      box.appendChild(p);
+    }
+    N.forEach(function (n) {
+      var a = document.createElement('a'); a.className = 'btn';
+      a.href = 'https://ao3.life/?q=' + encodeURIComponent(n); a.target = '_blank'; a.rel = 'noopener noreferrer';
+      a.textContent = 'Search ao3.life for ' + n;
+      box.appendChild(a);
+    });
+    $('email').value = draft();
+  }
+
+  function draft() {
+    var N = names();
+    var who = N.length ? N.join(', ') : '[your AO3 username]';
+    var list = works.length
+      ? works.map(function (id) { return '- https://ao3.life/works/ao3:' + id + '  (AO3: https://archiveofourown.org/works/' + id + ')'; }).join('\n')
+      : '- [your ao3.life links]';
+    return 'Subject: Removal request: works by ' + who + '\n\n' +
+      'Hello,\n\n' +
+      'I am the author of the following works, posted on the Archive of Our Own under the name ' + who + '. I did not give permission for them to be copied, stored, distributed as EPUB, or turned into audiobooks. Please remove all of them from ao3.life, including search, tag pages, downloads, the reader, audio, and stored copies and backups:\n\n' +
+      list + '\n\n' +
+      'Please also remove any other works credited to ' + who + ' that are not listed above.\n\n' +
+      'I am writing from the email address on my AO3 account.\n\n' +
+      'Please confirm in writing once each work has been removed.\n\n' +
+      (N[0] || '[your name or AO3 username]');
+  }
+
+  function copyText(text, field, status) {
+    function fallback() {
+      if (field) { field.focus(); field.select(); status.textContent = 'Selected. Copy it from your keyboard or menu.'; }
+      else status.textContent = 'Copy didn’t work in this browser.';
+    }
+    if (!text) { status.textContent = 'Nothing to copy yet.'; return; }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(function () { status.textContent = 'Copied.'; }, fallback);
+    else fallback();
+  }
+
+  $('users').addEventListener('input', renderSearches);
+  $('copyEmail').addEventListener('click', function () { copyText($('email').value, $('email'), $('emailStatus')); });
+  $('copyLinks').addEventListener('click', function () {
+    copyText(works.map(function (id) { return 'https://ao3.life/works/ao3:' + id; }).join('\n'), null, $('linkStatus'));
+  });
+  $('clearAll').addEventListener('click', function () { works = []; msg('', ''); render(); });
+
+  renderSearches();
+  render();
+})();
+</script>
+</body>
+</html>
